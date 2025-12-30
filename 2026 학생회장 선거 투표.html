@@ -1,0 +1,808 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>2026학년도 증산중학교 학생회장 선거 투표</title>
+  <style>
+    :root{
+      --bg:#0b0f19;
+      --card:#111a2b;
+      --muted:#a9b3c7;
+      --text:#eef2ff;
+      --accent:#6ee7ff;
+      --good:#34d399;
+      --bad:#fb7185;
+      --line:rgba(255,255,255,.10);
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, "Noto Sans KR", Arial, sans-serif;
+      background: radial-gradient(1200px 800px at 20% 0%, #172554 0%, transparent 55%),
+                  radial-gradient(1000px 700px at 100% 20%, #0f766e 0%, transparent 55%),
+                  var(--bg);
+      color:var(--text);
+      min-height:100vh;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:24px;
+    }
+    .wrap{
+      width:min(920px, 100%);
+      display:grid;
+      grid-template-columns: 1fr;
+      gap:16px;
+    }
+    .header{
+      padding:18px 20px;
+      background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
+      border:1px solid var(--line);
+      border-radius:16px;
+    }
+    h1{
+      margin:0 0 6px;
+      font-size:20px;
+      letter-spacing:-.2px;
+    }
+    .sub{
+      margin:0;
+      color:var(--muted);
+      font-size:13px;
+      line-height:1.4;
+    }
+    .card{
+      background: rgba(17,26,43,.78);
+      border:1px solid var(--line);
+      border-radius:16px;
+      padding:18px 20px;
+      box-shadow: 0 20px 80px rgba(0,0,0,.35);
+      backdrop-filter: blur(8px);
+    }
+    .row{display:flex; gap:12px; flex-wrap:wrap; align-items:center}
+    .field{
+      display:flex; flex-direction:column; gap:6px;
+      min-width: 180px;
+      flex:1;
+    }
+    label{font-size:12px;color:var(--muted)}
+    input{
+      width:100%;
+      padding:12px 12px;
+      border-radius:12px;
+      border:1px solid var(--line);
+      background: rgba(0,0,0,.22);
+      color: var(--text);
+      outline:none;
+      font-size:14px;
+    }
+    input:focus{border-color: rgba(110,231,255,.55); box-shadow:0 0 0 4px rgba(110,231,255,.12)}
+    .btns{display:flex; gap:10px; flex-wrap:wrap; margin-top:14px}
+    button{
+      border:none;
+      padding:10px 14px;
+      border-radius:12px;
+      background: rgba(110,231,255,.18);
+      color: var(--text);
+      font-weight:700;
+      cursor:pointer;
+      border:1px solid rgba(110,231,255,.25);
+    }
+    button:hover{background: rgba(110,231,255,.24)}
+    button.secondary{
+      background: rgba(255,255,255,.06);
+      border:1px solid var(--line);
+    }
+    button.danger{
+      background: rgba(251,113,133,.18);
+      border:1px solid rgba(251,113,133,.25);
+    }
+    .hint{
+      margin-top:10px;
+      color:var(--muted);
+      font-size:12px;
+      line-height:1.45;
+    }
+    .error{
+      margin-top:10px;
+      color: var(--bad);
+      font-weight:700;
+      font-size:13px;
+      display:none;
+    }
+    .ok{
+      margin-top:10px;
+      color: var(--good);
+      font-weight:700;
+      font-size:13px;
+      display:none;
+    }
+    .pillbar{
+      display:flex; gap:10px; flex-wrap:wrap;
+      margin-top:10px;
+    }
+    .pill{
+      padding:6px 10px;
+      border-radius:999px;
+      border:1px solid var(--line);
+      background: rgba(255,255,255,.05);
+      color: var(--muted);
+      font-size:12px;
+    }
+    .pill strong{color:var(--text)}
+    .stageTitle{
+      font-size:16px;
+      margin:0 0 10px;
+      letter-spacing:-.2px;
+    }
+
+    .candidates{
+      display:grid;
+      grid-template-columns: repeat(2, minmax(0,1fr));
+      gap:10px;
+      margin-top:12px;
+    }
+    @media (max-width:640px){
+      .candidates{grid-template-columns:1fr}
+    }
+    .cand{
+      border:1px solid var(--line);
+      border-radius:14px;
+      padding:12px 12px;
+      background: rgba(0,0,0,.18);
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:10px;
+    }
+    .cand .left{display:flex; flex-direction:column; gap:4px}
+    .cand .k{
+      font-size:12px; color:var(--muted)
+    }
+    .cand .n{
+      font-size:15px; font-weight:800;
+    }
+    .key{
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-weight:900;
+      padding:6px 10px;
+      border-radius:12px;
+      border:1px solid rgba(110,231,255,.25);
+      background: rgba(110,231,255,.10);
+      color: var(--text);
+      min-width: 44px;
+      text-align:center;
+    }
+    .key.gray{
+      border-color: var(--line);
+      background: rgba(255,255,255,.06);
+      color: var(--muted);
+    }
+
+    .voteBox{
+      margin-top:12px;
+      border:1px dashed rgba(255,255,255,.18);
+      border-radius:14px;
+      padding:12px;
+      background: rgba(0,0,0,.14);
+    }
+    .votePrompt{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      flex-wrap:wrap;
+    }
+    .votePrompt .big{
+      font-size:14px;
+      font-weight:800;
+      letter-spacing:-.2px;
+    }
+    .kbdNote{
+      color:var(--muted);
+      font-size:12px;
+      line-height:1.5;
+      margin-top:8px;
+    }
+
+    .resultGrid{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:12px;
+      margin-top:12px;
+    }
+    @media (max-width:720px){
+      .resultGrid{grid-template-columns:1fr}
+    }
+    .resultCard{
+      border:1px solid var(--line);
+      border-radius:14px;
+      padding:12px;
+      background: rgba(0,0,0,.16);
+    }
+    .resultCard h3{margin:0 0 10px; font-size:14px}
+    table{
+      width:100%;
+      border-collapse:collapse;
+      font-size:13px;
+    }
+    td{
+      padding:8px 6px;
+      border-top:1px solid var(--line);
+    }
+    td:first-child{color:var(--muted)}
+    .footerNote{
+      margin-top:10px;
+      font-size:12px;
+      color:var(--muted);
+      line-height:1.45;
+    }
+
+    .hidden{display:none}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="header">
+      <h1>2026학년도 증산중학교 학생회장 선거 투표 프로그램</h1>
+      <p class="sub">
+        학급별로 1명씩 <b>회장(1명)</b> + <b>부회장(1명)</b>을 키보드로만 투표합니다. (기권: 9)
+      </p>
+      <div class="pillbar">
+        <div class="pill">진행 단계: <strong id="pillStage">1</strong>/5</div>
+        <div class="pill">학급: <strong id="pillClass">-</strong></div>
+        <div class="pill">재적/결석/투표: <strong id="pillCounts">-</strong></div>
+        <div class="pill">투표 현황: <strong id="pillProgress">-</strong></div>
+      </div>
+    </div>
+
+    <!-- Stage 1 -->
+    <div class="card" id="stage1">
+      <h2 class="stageTitle">1. 학급 입력</h2>
+      <div class="row">
+        <div class="field" style="max-width:260px">
+          <label for="classInput">학급 (예: 1-4, 2-2)</label>
+          <input id="classInput" placeholder="예: 1-4" autocomplete="off" />
+        </div>
+      </div>
+      <div class="btns">
+        <button id="toStage2">다음</button>
+        <button class="secondary" id="resetAll1">전체 초기화</button>
+      </div>
+      <div class="error" id="err1"></div>
+      <div class="hint">형식은 자유지만, 보통 <b>학년-반</b> 형태(예: 1-4)를 권장합니다.</div>
+    </div>
+
+    <!-- Stage 2 -->
+    <div class="card hidden" id="stage2">
+      <h2 class="stageTitle">2. 인원 입력</h2>
+      <div class="row">
+        <div class="field">
+          <label for="totalInput">재적 인원</label>
+          <input id="totalInput" inputmode="numeric" placeholder="예: 24" />
+        </div>
+        <div class="field">
+          <label for="absentInput">결석 인원</label>
+          <input id="absentInput" inputmode="numeric" placeholder="예: 2" />
+        </div>
+        <div class="field">
+          <label for="votersInput">투표 인원</label>
+          <input id="votersInput" inputmode="numeric" placeholder="예: 22" />
+        </div>
+      </div>
+      <div class="btns">
+        <button id="toStage3">다음</button>
+        <button class="secondary" id="backTo1">이전</button>
+        <button class="danger" id="resetAll2">전체 초기화</button>
+      </div>
+      <div class="error" id="err2"></div>
+      <div class="ok" id="ok2"></div>
+      <div class="hint">
+        결석 인원 + 투표 인원 = 재적 인원 이어야 다음으로 넘어갈 수 있습니다.
+      </div>
+    </div>
+
+    <!-- Stage 3 (President vote) -->
+    <div class="card hidden" id="stage3">
+      <h2 class="stageTitle">3. 학생회장 후보 투표</h2>
+
+      <div class="voteBox">
+        <div class="votePrompt">
+          <div class="big">숫자 키로 선택하세요: <b>1~6</b> (후보), <b>9</b> (기권)</div>
+          <div class="pill">투표 현황: <strong id="progress3">0/0</strong></div>
+        </div>
+        <div class="kbdNote">
+          - 마우스 클릭 없이 <b>키보드 숫자</b>만으로 투표됩니다.<br/>
+          - 입력 즉시 저장되고 <b>부회장 투표(4단계)</b>로 넘어갑니다.
+        </div>
+      </div>
+
+      <div class="candidates" id="presList"></div>
+
+      <div class="btns">
+        <button class="secondary" id="backTo2">이전</button>
+        <button class="danger" id="resetAll3">전체 초기화</button>
+      </div>
+      <div class="error" id="err3"></div>
+    </div>
+
+    <!-- Stage 4 (Vice vote) -->
+    <div class="card hidden" id="stage4">
+      <h2 class="stageTitle">4. 부학생회장 후보 투표</h2>
+
+      <div class="voteBox">
+        <div class="votePrompt">
+          <div class="big">숫자 키로 선택하세요: <b>1~3</b> (후보), <b>9</b> (기권)</div>
+          <div class="pill">투표 현황: <strong id="progress4">0/0</strong></div>
+        </div>
+        <div class="kbdNote">
+          - 마우스 클릭 없이 <b>키보드 숫자</b>만으로 투표됩니다.<br/>
+          - 입력 즉시 저장되고, 다음 학생을 위해 다시 <b>회장 투표(3단계)</b>로 돌아갑니다.
+        </div>
+      </div>
+
+      <div class="candidates" id="viceList"></div>
+
+      <div class="btns">
+        <button class="secondary" id="backTo3">이전</button>
+        <button class="danger" id="resetAll4">전체 초기화</button>
+      </div>
+      <div class="error" id="err4"></div>
+    </div>
+
+    <!-- Stage 5 (Results) -->
+    <div class="card hidden" id="stage5">
+      <h2 class="stageTitle">5. 투표 결과</h2>
+
+      <div class="resultTitle" style="font-weight:900; font-size:15px; margin-bottom:8px;">
+        2026학년도 증산중학교 학생회장 선거 투표 결과
+      </div>
+      <div class="pillbar">
+        <div class="pill">학급: <strong id="resClass">-</strong></div>
+        <div class="pill">재적/결석/투표: <strong id="resCounts">-</strong></div>
+        <div class="pill">투표 완료: <strong id="resDone">-</strong></div>
+      </div>
+
+      <div class="resultGrid">
+        <div class="resultCard">
+          <h3>학생회장 결과</h3>
+          <table id="presTable"></table>
+          <div class="footerNote" id="presAbstainNote"></div>
+        </div>
+        <div class="resultCard">
+          <h3>부학생회장 결과</h3>
+          <table id="viceTable"></table>
+          <div class="footerNote" id="viceAbstainNote"></div>
+        </div>
+      </div>
+
+      <div class="btns">
+        <button id="restartSameClass">같은 학급 다시 시작</button>
+        <button class="secondary" id="backTo4">이전</button>
+        <button class="danger" id="resetAll5">전체 초기화</button>
+      </div>
+
+      <div class="hint">
+        기권표는 <b>결석 인원 + (해당 선거의 기권 입력 수)</b>로 집계되어 표시됩니다.
+      </div>
+    </div>
+  </div>
+
+<script>
+(() => {
+  // ====== 후보 데이터 ======
+  const presidents = [
+    {no:1, name:"이혜준"},
+    {no:2, name:"윤서준"},
+    {no:3, name:"안노아"},
+    {no:4, name:"구범모"},
+    {no:5, name:"곽예성"},
+    {no:6, name:"박시온"},
+  ];
+  const vices = [
+    {no:1, name:"이지우"},
+    {no:2, name:"조아라"},
+    {no:3, name:"조민아"},
+  ];
+
+  // ====== 상태 ======
+  const state = {
+    className: "",
+    total: 0,
+    absent: 0,
+    voters: 0,
+    votedCount: 0,               // 완료(회장+부회장)한 학생 수
+    pendingPresident: null,      // 현재 학생의 회장 선택(임시)
+    presVotes: new Map(),        // no -> count
+    viceVotes: new Map(),        // no -> count
+    presAbstainInput: 0,         // 9 입력된 횟수 (회장)
+    viceAbstainInput: 0,         // 9 입력된 횟수 (부회장)
+  };
+
+  // 초기 카운트 세팅
+  presidents.forEach(c => state.presVotes.set(c.no, 0));
+  vices.forEach(c => state.viceVotes.set(c.no, 0));
+
+  // ====== DOM ======
+  const el = (id) => document.getElementById(id);
+
+  const stages = [el("stage1"), el("stage2"), el("stage3"), el("stage4"), el("stage5")];
+  const pillStage = el("pillStage");
+  const pillClass = el("pillClass");
+  const pillCounts = el("pillCounts");
+  const pillProgress = el("pillProgress");
+
+  const classInput = el("classInput");
+  const totalInput = el("totalInput");
+  const absentInput = el("absentInput");
+  const votersInput = el("votersInput");
+
+  const err1 = el("err1");
+  const err2 = el("err2");
+  const ok2  = el("ok2");
+  const err3 = el("err3");
+  const err4 = el("err4");
+
+  const progress3 = el("progress3");
+  const progress4 = el("progress4");
+
+  const presList = el("presList");
+  const viceList = el("viceList");
+
+  const resClass = el("resClass");
+  const resCounts = el("resCounts");
+  const resDone = el("resDone");
+  const presTable = el("presTable");
+  const viceTable = el("viceTable");
+  const presAbstainNote = el("presAbstainNote");
+  const viceAbstainNote = el("viceAbstainNote");
+
+  // ====== UI 유틸 ======
+  let currentStage = 1;
+
+  function showStage(n){
+    currentStage = n;
+    stages.forEach((s, i) => s.classList.toggle("hidden", (i+1) !== n));
+    pillStage.textContent = String(n);
+    refreshPills();
+
+    // 오류 메시지 숨김
+    [err1, err2, ok2, err3, err4].forEach(x => { x.style.display="none"; x.textContent=""; });
+
+    // 포커스
+    if(n === 1) classInput.focus();
+    if(n === 2) totalInput.focus();
+  }
+
+  function refreshPills(){
+    pillClass.textContent = state.className || "-";
+    if(state.total > 0 || state.absent > 0 || state.voters > 0){
+      pillCounts.textContent = `${state.total}/${state.absent}/${state.voters}`;
+    } else {
+      pillCounts.textContent = "-";
+    }
+    if(state.voters > 0){
+      pillProgress.textContent = `${state.votedCount}/${state.voters}`;
+    } else {
+      pillProgress.textContent = "-";
+    }
+
+    // stages 3/4 progress
+    if(state.voters > 0){
+      progress3.textContent = `${state.votedCount}/${state.voters}`;
+      progress4.textContent = `${state.votedCount}/${state.voters}`;
+    } else {
+      progress3.textContent = `0/0`;
+      progress4.textContent = `0/0`;
+    }
+  }
+
+  function setError(targetEl, msg){
+    targetEl.textContent = msg;
+    targetEl.style.display = "block";
+  }
+  function setOk(targetEl, msg){
+    targetEl.textContent = msg;
+    targetEl.style.display = "block";
+  }
+
+  function isNonNegInt(v){
+    return Number.isInteger(v) && v >= 0;
+  }
+
+  // ====== 후보 리스트 렌더 ======
+  function renderCandidates(){
+    presList.innerHTML = "";
+    presidents.forEach(c => {
+      const div = document.createElement("div");
+      div.className = "cand";
+      div.innerHTML = `
+        <div class="left">
+          <div class="k">기호 ${c.no}번</div>
+          <div class="n">${c.name}</div>
+        </div>
+        <div class="key">${c.no}</div>
+      `;
+      presList.appendChild(div);
+    });
+    // 기권 9 표시
+    const abst = document.createElement("div");
+    abst.className = "cand";
+    abst.innerHTML = `
+      <div class="left">
+        <div class="k">기권</div>
+        <div class="n">기권(무효/기권 처리)</div>
+      </div>
+      <div class="key gray">9</div>
+    `;
+    presList.appendChild(abst);
+
+    viceList.innerHTML = "";
+    vices.forEach(c => {
+      const div = document.createElement("div");
+      div.className = "cand";
+      div.innerHTML = `
+        <div class="left">
+          <div class="k">기호 ${c.no}번</div>
+          <div class="n">${c.name}</div>
+        </div>
+        <div class="key">${c.no}</div>
+      `;
+      viceList.appendChild(div);
+    });
+    const abst2 = document.createElement("div");
+    abst2.className = "cand";
+    abst2.innerHTML = `
+      <div class="left">
+        <div class="k">기권</div>
+        <div class="n">기권(무효/기권 처리)</div>
+      </div>
+      <div class="key gray">9</div>
+    `;
+    viceList.appendChild(abst2);
+  }
+
+  renderCandidates();
+
+  // ====== 결과 렌더 ======
+  function renderResults(){
+    resClass.textContent = state.className || "-";
+    resCounts.textContent = `${state.total}/${state.absent}/${state.voters}`;
+    resDone.textContent = `${state.votedCount}/${state.voters}`;
+
+    // 표 생성
+    presTable.innerHTML = "";
+    presidents.forEach(c => {
+      const tr = document.createElement("tr");
+      const count = state.presVotes.get(c.no) || 0;
+      tr.innerHTML = `<td>기호 ${c.no}번 ${c.name}</td><td style="text-align:right;font-weight:800">${count}표</td>`;
+      presTable.appendChild(tr);
+    });
+
+    viceTable.innerHTML = "";
+    vices.forEach(c => {
+      const tr = document.createElement("tr");
+      const count = state.viceVotes.get(c.no) || 0;
+      tr.innerHTML = `<td>기호 ${c.no}번 ${c.name}</td><td style="text-align:right;font-weight:800">${count}표</td>`;
+      viceTable.appendChild(tr);
+    });
+
+    // 기권표 = 결석 인원 + 기권 입력 수
+    const presAbstainTotal = state.absent + state.presAbstainInput;
+    const viceAbstainTotal = state.absent + state.viceAbstainInput;
+
+    const trA1 = document.createElement("tr");
+    trA1.innerHTML = `<td>기권표</td><td style="text-align:right;font-weight:900">${presAbstainTotal}표</td>`;
+    presTable.appendChild(trA1);
+
+    const trA2 = document.createElement("tr");
+    trA2.innerHTML = `<td>기권표</td><td style="text-align:right;font-weight:900">${viceAbstainTotal}표</td>`;
+    viceTable.appendChild(trA2);
+
+    presAbstainNote.textContent = `기권표(회장) = 결석 ${state.absent}명 + 기권 입력 ${state.presAbstainInput}표 = ${presAbstainTotal}표`;
+    viceAbstainNote.textContent = `기권표(부회장) = 결석 ${state.absent}명 + 기권 입력 ${state.viceAbstainInput}표 = ${viceAbstainTotal}표`;
+  }
+
+  // ====== 단계 전환 로직 ======
+  el("toStage2").addEventListener("click", () => {
+    const v = classInput.value.trim();
+    if(!v){
+      setError(err1, "학급을 입력해 주세요. 예: 1-4");
+      return;
+    }
+    state.className = v;
+    showStage(2);
+  });
+
+  el("backTo1").addEventListener("click", () => showStage(1));
+
+  el("toStage3").addEventListener("click", () => {
+    const t = Number(totalInput.value);
+    const a = Number(absentInput.value);
+    const v = Number(votersInput.value);
+
+    if(!Number.isFinite(t) || !Number.isFinite(a) || !Number.isFinite(v)){
+      setError(err2, "재적/결석/투표 인원을 모두 숫자로 입력해 주세요.");
+      return;
+    }
+    if(!isNonNegInt(t) || !isNonNegInt(a) || !isNonNegInt(v)){
+      setError(err2, "인원은 0 이상의 정수로 입력해 주세요.");
+      return;
+    }
+    if(a + v !== t){
+      setError(err2, `검증 실패: 결석(${a}) + 투표(${v}) = ${a+v} 이고, 재적(${t})과 같아야 합니다.`);
+      return;
+    }
+    if(v === 0){
+      setError(err2, "투표 인원이 0명입니다. (결석 인원이 재적과 동일) 투표를 진행할 수 없습니다.");
+      return;
+    }
+
+    state.total = t;
+    state.absent = a;
+    state.voters = v;
+    state.votedCount = 0;
+    state.pendingPresident = null;
+    state.presAbstainInput = 0;
+    state.viceAbstainInput = 0;
+    presidents.forEach(c => state.presVotes.set(c.no, 0));
+    vices.forEach(c => state.viceVotes.set(c.no, 0));
+
+    refreshPills();
+    setOk(ok2, "인원 검증 완료! 이제 투표를 시작합니다.");
+    showStage(3);
+  });
+
+  el("backTo2").addEventListener("click", () => showStage(2));
+  el("backTo3").addEventListener("click", () => showStage(3));
+  el("backTo4").addEventListener("click", () => showStage(4));
+
+  // ====== 키보드 투표 처리 ======
+  function handlePresidentKey(key){
+    // 허용: 1~6, 9
+    const k = Number(key);
+    if(!Number.isInteger(k)) return false;
+    if(k === 9){
+      state.pendingPresident = 9;
+      return true;
+    }
+    if(k >= 1 && k <= 6){
+      state.pendingPresident = k;
+      return true;
+    }
+    return false;
+  }
+
+  function handleViceKey(key){
+    // 허용: 1~3, 9
+    const k = Number(key);
+    if(!Number.isInteger(k)) return false;
+    if(k === 9){
+      // 회장표 먼저 반영, 부회장 기권 반영 후 1명 완료 처리
+      commitOneBallot(9);
+      return true;
+    }
+    if(k >= 1 && k <= 3){
+      commitOneBallot(k);
+      return true;
+    }
+    return false;
+  }
+
+  function commitOneBallot(viceChoice){
+    // 1) 회장 선택이 반드시 있어야 함
+    if(state.pendingPresident === null){
+      setError(err4, "오류: 회장 투표 기록이 없습니다. (3단계로 돌아가세요)");
+      return;
+    }
+
+    // 2) 회장표 반영
+    if(state.pendingPresident === 9){
+      state.presAbstainInput += 1;
+    } else {
+      state.presVotes.set(state.pendingPresident, (state.presVotes.get(state.pendingPresident) || 0) + 1);
+    }
+
+    // 3) 부회장표 반영
+    if(viceChoice === 9){
+      state.viceAbstainInput += 1;
+    } else {
+      state.viceVotes.set(viceChoice, (state.viceVotes.get(viceChoice) || 0) + 1);
+    }
+
+    // 4) 1명 완료 처리
+    state.votedCount += 1;
+    state.pendingPresident = null;
+    refreshPills();
+
+    // 5) 모두 완료면 결과로
+    if(state.votedCount >= state.voters){
+      renderResults();
+      showStage(5);
+    } else {
+      // 다음 학생 회장 투표로
+      showStage(3);
+    }
+  }
+
+  // 전역 키 이벤트: 현재 스테이지에 따라 처리
+  window.addEventListener("keydown", (e) => {
+    // 결과 화면에서는 키 입력 무시
+    if(currentStage === 5) return;
+
+    // 숫자키만
+    const key = e.key;
+    if(!/^\d$/.test(key)) return;
+
+    if(currentStage === 3){
+      const ok = handlePresidentKey(key);
+      if(ok){
+        // 회장 투표 완료 -> 부회장 단계로
+        showStage(4);
+      } else {
+        setError(err3, "회장 투표는 1~6 또는 9(기권)만 입력할 수 있습니다.");
+      }
+    } else if(currentStage === 4){
+      const ok = handleViceKey(key);
+      if(!ok){
+        setError(err4, "부회장 투표는 1~3 또는 9(기권)만 입력할 수 있습니다.");
+      }
+    }
+  });
+
+  // ====== 결과 화면 버튼 ======
+  el("restartSameClass").addEventListener("click", () => {
+    // 같은 학급/인원 유지, 투표만 초기화
+    state.votedCount = 0;
+    state.pendingPresident = null;
+    state.presAbstainInput = 0;
+    state.viceAbstainInput = 0;
+    presidents.forEach(c => state.presVotes.set(c.no, 0));
+    vices.forEach(c => state.viceVotes.set(c.no, 0));
+    refreshPills();
+    showStage(3);
+  });
+
+  // ====== 전체 초기화 ======
+  function resetAll(){
+    state.className = "";
+    state.total = 0;
+    state.absent = 0;
+    state.voters = 0;
+    state.votedCount = 0;
+    state.pendingPresident = null;
+    state.presAbstainInput = 0;
+    state.viceAbstainInput = 0;
+    presidents.forEach(c => state.presVotes.set(c.no, 0));
+    vices.forEach(c => state.viceVotes.set(c.no, 0));
+
+    classInput.value = "";
+    totalInput.value = "";
+    absentInput.value = "";
+    votersInput.value = "";
+    refreshPills();
+    showStage(1);
+  }
+
+  ["resetAll1","resetAll2","resetAll3","resetAll4","resetAll5"].forEach(id=>{
+    el(id).addEventListener("click", resetAll);
+  });
+
+  // Enter로 다음(편의)
+  classInput.addEventListener("keydown", (e) => {
+    if(e.key === "Enter") el("toStage2").click();
+  });
+  [totalInput, absentInput, votersInput].forEach(inp=>{
+    inp.addEventListener("keydown", (e)=>{
+      if(e.key === "Enter") el("toStage3").click();
+    });
+  });
+
+  // 시작
+  refreshPills();
+  showStage(1);
+})();
+</script>
+</body>
+</html>
